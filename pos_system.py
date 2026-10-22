@@ -1,3 +1,6 @@
+"""
+Retail Point of Sale & Discount Tracker
+"""
 import secrets
 
 
