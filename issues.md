@@ -1,0 +1,6 @@
+| Issue | Type | Line(s) | Description | Fix Approach |
+| :--- | :--- | :--- | :--- | :--- |
+| **Insecure function (Bandit B307)** | Security | 27 | The script uses `eval()` to process promo codes, which is dangerous because it can execute malicious code. | Removed `eval()` and replaced it with safe `if/elif` statements to handle specific promo strings. |
+| **Mutable default arg (Pylint W0102)** | Bug | 10 | `receipts=[]` is shared across all function calls, meaning the same list keeps growing instead of resetting. | Changed the default to `None` and initialized `receipts = []` inside the function body. |
+| **Bare exception (Flake8 E722)** | Quality | 16 | The `except:` clause catches everything, including system interrupts, hiding the actual cause of a crash. | Specified the exact exception types expected, like `except (KeyError, TypeError):`. |
+| **Unclosed file (Pylint R1732)** | Resource | 37 | The `open()` function is used without a `with` statement, which can lead to memory leaks if the file isn't closed. | Wrapped the file operation in a `with open(..., encoding="utf-8") as f:` block to auto-close it. |
