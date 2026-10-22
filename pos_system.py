@@ -1,11 +1,11 @@
-import json
 import secrets
-import logging
+
 
 # Global state
 price_list = {"pen": 10, "notebook": 45, "bag": 799, "bottle": 150}
 sales_total = 0
 receipt_lines = []
+
 
 def process_checkout(cart_items, tax_rate=0.05, receipts=[]):
     global sales_total
@@ -13,22 +13,24 @@ def process_checkout(cart_items, tax_rate=0.05, receipts=[]):
     for item in cart_items:
         try:
             subtotal = subtotal + price_list[item[0]] * item[1]
-        except:
+        except (KeyError, TypeError):
             subtotal = subtotal + 0
     total = subtotal + subtotal * tax_rate
     receipts.append(total)
     sales_total += total
-    receipt_lines.append("Receipt #%d total=%.2f" % (secrets.randbelow(9000) + 1000, total))
+    receipt_num = secrets.randbelow(9000) + 1000
+    receipt_lines.append("Receipt #%d total=%.2f" % (receipt_num, total))
     return total
+
 
 def apply_promo_code(code_str):
     # promo codes look like "total * 0.9" or "total - 50"
-    total = sales_total
     if code_str == "total * 0.9":
-        return total * 0.9
+        return sales_total * 0.9
     elif code_str == "total - 50":
-        return total - 50
-    return total
+        return sales_total - 50
+    return sales_total
+
 
 def update_stock(item, qty):
     try:
@@ -37,13 +39,16 @@ def update_stock(item, qty):
     except KeyError:
         pass
 
+
 def save_receipt_log(file="pos_log.txt"):
     f = open(file, "a")
     for line in receipt_lines:
         f.write(line + "\n")
 
+
 def printSales():
     print("Sales so far: " + str(sales_total))
+
 
 def main():
     print("Bill 1:", process_checkout([("pen", 3), ("notebook", 2)]))
@@ -57,4 +62,6 @@ def main():
     save_receipt_log()
     printSales()
 
-main()
+
+if __name__ == "__main__":
+    main()
