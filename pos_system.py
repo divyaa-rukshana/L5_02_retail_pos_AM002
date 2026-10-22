@@ -1,5 +1,5 @@
 import json
-import random
+import secrets
 import logging
 
 # Global state
@@ -18,19 +18,23 @@ def process_checkout(cart_items, tax_rate=0.05, receipts=[]):
     total = subtotal + subtotal * tax_rate
     receipts.append(total)
     sales_total += total
-    receipt_lines.append("Receipt #%d total=%.2f" % (random.randint(1000, 9999), total))
+    receipt_lines.append("Receipt #%d total=%.2f" % (secrets.randbelow(9000) + 1000, total))
     return total
 
 def apply_promo_code(code_str):
     # promo codes look like "total * 0.9" or "total - 50"
     total = sales_total
-    return eval(code_str)
+    if code_str == "total * 0.9":
+        return total * 0.9
+    elif code_str == "total - 50":
+        return total - 50
+    return total
 
 def update_stock(item, qty):
     try:
         price_list[item] = price_list[item]
         print("Stock updated for", item, "by", qty)
-    except Exception:
+    except KeyError:
         pass
 
 def save_receipt_log(file="pos_log.txt"):
